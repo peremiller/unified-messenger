@@ -1,0 +1,25 @@
+# Secrets — never commit
+.env
+*.session
+*.session-journal
+# Firebase / FCM secrets
+**/google-services.json
+**/GoogleService-Info.plist
+**/service-account*.json
+firebase-*.json
+
+# Python
+backend/venv/
+**/__pycache__/
+*.pyc
+
+# Flutter / Dart
+app/build/
+app/.dart_tool/
+app/.flutter-plugins
+app/.flutter-plugins-dependencies
+.packages
+
+# Logs / OS
+*.log
+.DS_Store
