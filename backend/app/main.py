@@ -11,10 +11,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from . import background, config, presence
 from .adapters import registry
 from .api.routes import router, ws_router
+from .security import ensure_live_integrations_protected
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
+    ensure_live_integrations_protected()
     await registry.start_all()
     presence.seed_demo()
     if not config.API_KEY:
