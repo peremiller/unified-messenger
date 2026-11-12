@@ -165,10 +165,13 @@ Android/iOS); it degrades gracefully to "signal only" if location is denied.
 - **Secrets stay local.** `.env` and Telegram `*.session` files are git-ignored
   (root + `backend/.gitignore`). Never commit them; the session file is a full
   login to your Telegram account.
-- **API auth is opt-in.** With no `API_KEY` the backend is unauthenticated —
-  fine for `localhost`, but it binds `0.0.0.0`, so anyone on your network could
-  read/send your messages. Set `API_KEY` (a long random string) before exposing
-  it. Then every REST call needs the `X-API-Key` header and the WebSocket needs
+- **API auth is mandatory for live integrations.** Without `API_KEY` the backend
+  permits only credential-free demo mode. The local launch script now binds
+  `127.0.0.1` by default; an explicit public-network bind (such as Render)
+  remains unauthenticated for sample data unless a key is configured. Set a
+  long random `API_KEY` before adding Telegram, Discord, Slack or Firebase
+  credentials. Startup refuses real integrations without that key. With a key,
+  every REST call needs the `X-API-Key` header and the WebSocket needs
   `?key=`; the app supplies both from `--dart-define=API_KEY=YOUR_KEY`.
   ```bash
   # backend/.env
@@ -177,6 +180,12 @@ Android/iOS); it degrades gracefully to "signal only" if location is denied.
   flutter run --dart-define=API_BASE=http://192.168.x.x:8000 --dart-define=API_KEY=<same value>
   ```
   The backend prints a warning at startup whenever auth is off.
+  **Do not put a shared backend API key in a publicly served Flutter web
+  build**: compile-time `--dart-define` values can be extracted from delivered
+  JavaScript. For public multi-user access, use per-user authentication and a
+  trusted server-side session/proxy instead. A shared API key is suitable only
+  for a private trusted client; it is not tenant-level authorization.
+  For intentional LAN testing with an API key, run `HOST=0.0.0.0 ./run.sh`.
 
 ## Adding a new platform
 
