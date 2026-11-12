@@ -37,10 +37,11 @@ SLACK_TOKEN = os.getenv("SLACK_TOKEN", "")
 SUBSTACK_FEEDS = [u.strip() for u in os.getenv("SUBSTACK_FEEDS", "").split(",") if u.strip()]
 
 # Server
-HOST = os.getenv("HOST", "0.0.0.0")
+HOST = os.getenv("HOST", "127.0.0.1")
 PORT = int(os.getenv("PORT", "8000"))
 
-# Optional shared secret. If set, every REST call must send it as the
+# Required for live platform credentials; optional for credential-free demo.
+# If set, every REST call must send it as the
 # `X-API-Key` header and the WebSocket must pass it as `?key=`. Leave blank for
 # local-only development; ALWAYS set it before exposing the backend on a network.
 API_KEY = os.getenv("API_KEY", "")
