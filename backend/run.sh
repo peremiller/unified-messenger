@@ -7,4 +7,4 @@ if [ ! -d venv ]; then
 fi
 source venv/bin/activate
 pip install -q -r requirements.txt
-exec uvicorn app.main:app --host 0.0.0.0 --port "${PORT:-8000}" --reload
+exec uvicorn app.main:app --host "${HOST:-127.0.0.1}" --port "${PORT:-8000}" --reload
