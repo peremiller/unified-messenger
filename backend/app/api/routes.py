@@ -135,16 +135,21 @@ async def websocket_endpoint(ws: WebSocket, key: Optional[str] = Query(default=N
 
 
 def _apply_overlay(c: Conversation) -> Conversation:
-    """Fold any live (pushed/simulated) messages into the conversation summary."""
+    """Fold live messages into a response without mutating adapter snapshots.
+
+    A cached adapter Conversation may be reused across inbox refreshes. Its
+    unread count must not accumulate the same overlay again on every request.
+    """
     latest = live_store.latest(c.platform.value, c.id)
     if latest is None:
         return c
+    result = c.model_copy()
     if not c.timestamp or latest.timestamp >= c.timestamp:
-        c.last_message = latest.text
-        c.last_sender = latest.sender_name
-        c.timestamp = latest.timestamp
-    c.unread_count += live_store.incoming_count(c.platform.value, c.id)
-    return c
+        result.last_message = latest.text
+        result.last_sender = latest.sender_name
+        result.timestamp = latest.timestamp
+    result.unread_count += live_store.incoming_count(c.platform.value, c.id)
+    return result
 
 
 def _adapter_or_404(platform: str):
